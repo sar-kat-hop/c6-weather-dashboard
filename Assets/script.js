@@ -4,6 +4,9 @@ var city;
 // var zip; 
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
 
+//this uses open weather's geocoder api, which will match city name, state, and country code
+//http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+
 //desired fxnality:
 //user types city name
 //matching cities suggested as user types, user clicks one to select (?)
