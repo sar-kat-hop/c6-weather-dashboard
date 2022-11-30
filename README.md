@@ -16,7 +16,7 @@ N/A
 
 ## Deployed Website
 
-You can visit the deployed work-in-progress dashboard [here]().
+You can visit the deployed work-in-progress dashboard [here](https://sar-kat-hop.github.io/c6-weather-dashboard/).
 
 ## License
 
