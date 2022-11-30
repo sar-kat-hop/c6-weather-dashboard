@@ -1,0 +1,21 @@
+.card-group {
+    content-visibility: hidden;
+}
+
+.card-group-visible {
+    content-visibility: visible;
+}
+
+.float-start {
+    position: right;
+    content-visibility: hidden;
+}
+
+.search-history-visible {
+    position: right;
+    content-visibility: visible;
+}
+
+.list-group list-group-flush {
+    list-style: none;
+}

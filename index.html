@@ -10,8 +10,6 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous" />
     <link rel="stylesheet" href="./Assets/style.css" />
-    <script src="./Assets/config.js" name="hide api config"></script>
-    <script src="./Assets/script.js" name="local js"></script>
     <title>Weather Dashboard</title>
     </head>
 
@@ -26,6 +24,84 @@
         </header>
         <div class="form">
             <input id="city-search" class="form-control form-control-lg" type="text" placeholder="search for city here" aria-label=".form-control-lg">
+            <button id="searchBtn" type="button" class="btn btn-primary">Search</button>
+            <button id="clear-history" type="button" class="btn btn-primary">Clear History</button>
+        </div>
+        <!-- <div class="container-md"> -->
+        <div id="search-history" class="float-start">
+            <ul id="recent-list" class="list-group list-group-flush">
+                <!-- <li id="recent1" class="list-group-item"></li>
+                <li id="recent2" class="list-group-item"></li>
+                <li id="recent3" class="list-group-item"></li> -->
+            </ul>
+        </div><br>
+        <!-- </div> -->
+        <div class="card-group">
+            <div id="day1" class="card">
+                <img id="img1" src="" class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 id="dayName1" class="card-title"></h5>
+                    <p id="temp1" class="card-text"></p>
+                    <p id="wind1" class="card-text"></p>
+                    <p id="humid1" class="card-text"></p>
+            </div>
+                <!-- <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                </div> -->
+            <!-- </div> -->
+            <!-- <div id="day2" class="card">
+                <img id="img2" src="" class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 id="dayName2" class="card-title"></h5>
+                    <p id="temp2" class="card-text"></p>
+                    <p id="wind2" class="card-text"></p>
+                    <p id="humid2" class="card-text"></p>
+                </div> -->
+                <!-- <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                </div> -->
+            <!-- </div> -->
+            <!-- <div id="day3" class="card">
+                <img id="img3" src="" class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 id="dayName3" class="card-title"></h5>
+                    <p id="temp3" class="card-text"></p>
+                    <p id="wind3" class="card-text"></p>
+                    <p id="humid3" class="card-text"></p>
+                </div> -->
+                <!-- <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                </div> -->
+            <!-- </div>
+            <div id="day4" class="card">
+                <img id="img4" src="" class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 id="dayName4" class="card-title"></h5>
+                    <p id="temp4" class="card-text"></p>
+                    <p id="wind4" class="card-text"></p>
+                    <p id="humid4" class="card-text"></p>
+                </div> -->
+                <!-- <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                </div> -->
+            <!-- </div>
+            <div id="day5" class="card">
+                <img id="img5" src="" class="card-img-top" alt="card-group-image">
+                <div class="card-body">
+                    <h5 id="dayName5" class="card-title"></h5>
+                    <p id="temp5" class="card-text"></p>
+                    <p id="wind5" class="card-text"></p>
+                    <p id="humid5" class="card-text"></p>
+                </div> -->
+                <!-- <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                </div> -->
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous" name="bootstrap+popper"></script>
     </body>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <script src="./Assets/config.js" name="hide api config"></script>
+    <script src="./Assets/script.js" name="local js"></script>
+<footer></footer>
+</html>
