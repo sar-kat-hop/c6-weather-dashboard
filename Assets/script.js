@@ -1,5 +1,7 @@
 var myKey = "62eb98c3ab74f9534ab6935d0569a051";
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myKey;
+var geocoder;
+var requestURL = "http://api.openweathermap.org/data/2.5/weather";
 
 var city = document.querySelector("#city-search").value;
 var state;
@@ -14,7 +16,6 @@ var searchList = $("ul[id=recent-list]");
 var weatherContainer = $("div[id^=day]");
 var clearBtn = $("[id=clear-button]");
 
-
 $(document).ready(function() {
     let history = document.querySelector("#recent-list");
     let showHistory = JSON.stringify(localStorage);
@@ -22,9 +23,22 @@ $(document).ready(function() {
     history.append(showHistory);
 });
 
+$.ajax({
+    url: requestURL,
+    method: "GET",
+}).then(function(response) {
+    return response;
+}).then(function(data) {
+    for (i = 0; i < data.length; i++) {
+        var listItem = document.createElement("li");
+        listItem.textContent = data[i]. ;
+        searchList.appendChild(listItem);
+    }   
+});
+
 $(function showHistory() {
     if (localStorage != 0) {
-        $(searchHistory).addClass("search-history-visible");
+        searchHistory.addClass("search-history-visible");
     }
 });
 
@@ -32,8 +46,9 @@ $(function btnEventListener() {
     searchBtn.click(function(event) {
         event.preventDefault();
     })
-
 });
+
+searchBtn.addEventListener("click", getApi);
 
 $(function clearHistory() {
     clearBtn.click(function() {
@@ -56,8 +71,7 @@ $(function saveMe() {
             //parse array
             //display array as individual list items
         }
-
-        function getData();
+        // function getData();
     })
     // return newCity, recent;
 });
