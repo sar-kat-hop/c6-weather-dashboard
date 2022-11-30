@@ -17,10 +17,10 @@ var weatherContainer = $("div[id^=day]");
 // console.log((fetch(queryURL)));
 
 $(document).ready(function() {
-    localStorage.getItem(recent);
-    console.log(localStorage);
+    document.querySelector("#recent-list");
     $(searchHistory).addClass("search-history-visible");
-    $(searchHistory).append()
+    // $(searchHistory).append(txt);
+    $(searchHistory).addClass("list-group list-group-flush");
 });
 
 $(function boop() {
@@ -38,20 +38,30 @@ $(function btnEventListener() {
 
 $(function saveMe() {
     searchBtn.click(function() {
-        var newCity = $(searchInput); //capture input val when button clicked
-        recent.push(newCity); //push newcity to recent array
-        localStorage.setItem(recent, newCity);
-        console.log(recent, localStorage);
+
+        var newCity = document.querySelector("#city-search").value; //can't figure out how to get value using jQuery
+        var listItem = document.createElement("li");
+        recent.push(newCity);
+
+        if (newCity != 0) {
+
+            localStorage.setItem(recent, newCity);
+            console.log(newCity, recent, localStorage);
+            
+            // $(searchList).append(listItem, newCity);
+            // searchList.append(listItem, newCity);
+        }
     })
 });
 
+
 //save up to 3 most recently searched cities 
-$(function trimRecent() {
-    if (recent.length > 3) {
-        recent.length.slice(0, 3);
-    }
-    return recent;
-});
+// $(function trimRecent() {
+//     if (recent.length > 3) {
+//         recent.slice(0, 3);
+//     }
+//     // return recent;
+// });
 
 // searchBtn.onclick = function() {
 //     var newCity = searchInput.value; 
