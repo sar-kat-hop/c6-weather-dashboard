@@ -1,0 +1,17 @@
+.card-group {
+    content-visibility: hidden;
+}
+
+.card-group-visible {
+    content-visibility: visible;
+}
+
+.float-start {
+    position: right;
+    content-visibility: hidden;
+}
+
+.float-start-visible {
+    position: right;
+    content-visibility: visible;
+}

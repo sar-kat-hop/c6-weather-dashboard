@@ -4,13 +4,25 @@ var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&ap
 var city;
 // var state;
 // var zip; 
+var coords;
+var recent = [];
 
-var searchBar = document.getElementById("city-search");
-var weatherContainer = document.getElementById("");
+var searchInput = document.querySelector("#city-search");
+var searchBtn = document.querySelector("#searchBtn");
 
-console.log((fetch(queryURL)));
+var searchHistoryList = document.querySelector("#history");
+var weatherContainer = document.querySelector(".card-group");
 
+// console.log((fetch(queryURL)));
 
+searchBtn.onclick = function() {
+    var newCity = searchInput.value; //capture input value only when button clicked
+    var listItem = document.createElement("li");
+    listItem.innerHTML = recent;
+    recent.push(newCity); //push new city to recent array
+    localStorage.setItem(recent, newCity);
+    console.log(recent, localStorage);
+};
 
 
 //this uses open weather's geocoder api, which will match city name, state, and country code
@@ -26,6 +38,7 @@ console.log((fetch(queryURL)));
 //TODO: on page load, display user's default location's weather forecast (?)
 //TODO: add functionality to city search bar to suggest cities
 //TODO: write fxn to pull, display, and save weather data to local storage once city is selected
+//TODO: write fxn to only display cards if there is content to append to them, otherwise hide them
 
 //pseudocode
 //save user input to var city
