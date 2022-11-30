@@ -19,3 +19,16 @@
 .list-group list-group-flush {
     list-style: none;
 }
+
+.navbar-brand {
+    align-items: center;
+    text-align: center;
+}
+
+#searchBtn {
+    background-color: rgb(77, 185, 218);
+}
+
+#clear-history {
+    background-color: rgb(102, 125, 133);
+}
