@@ -1,10 +1,10 @@
 var myKey = "62eb98c3ab74f9534ab6935d0569a051";
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myKey;
 
-var city;
-// var state;
-// var zip; 
-var coords;
+var city = document.querySelector("#city-search").value;
+var state;
+var zip; 
+var coords; //will need if using geocoder API to get lat and lon coordinates
 var recent = [];
 
 var searchInput = $("[id=city-search]").val();
@@ -12,20 +12,18 @@ var searchBtn = $("[id=searchBtn]");
 var searchHistory = $("[id=search-history");
 var searchList = $("ul[id=recent-list]");
 var weatherContainer = $("div[id^=day]");
+var clearBtn = $("[id=clear-button]");
 
-// console.log($(searchList).textContent);
-// console.log((fetch(queryURL)));
 
 $(document).ready(function() {
-    document.querySelector("#recent-list");
-    $(searchHistory).addClass("search-history-visible");
-    // $(searchHistory).append(txt);
+    let history = document.querySelector("#recent-list");
+    let showHistory = JSON.stringify(localStorage);
     $(searchHistory).addClass("list-group list-group-flush");
+    history.append(showHistory);
 });
 
-$(function boop() {
+$(function showHistory() {
     if (localStorage != 0) {
-        console.log("stuff detected");
         $(searchHistory).addClass("search-history-visible");
     }
 });
@@ -34,24 +32,34 @@ $(function btnEventListener() {
     searchBtn.click(function(event) {
         event.preventDefault();
     })
+
+});
+
+$(function clearHistory() {
+    clearBtn.click(function() {
+        localStorage.clear();
+        searchHistory.children().text("");
+    })
 });
 
 $(function saveMe() {
-    searchBtn.click(function() {
-
-        var newCity = document.querySelector("#city-search").value; //can't figure out how to get value using jQuery
-        var listItem = document.createElement("li");
-        recent.push(newCity);
-
+    searchBtn.click(function() {        
         if (newCity != 0) {
-
-            localStorage.setItem(recent, newCity);
-            console.log(newCity, recent, localStorage);
+            var newCity = document.querySelector("#city-search").value; //can't figure out how to get value using jQuery
             
-            // $(searchList).append(listItem, newCity);
-            // searchList.append(listItem, newCity);
+            recent.push(newCity); //push newly entered city to array 'recent'
+
+            localStorage.setItem("cityNames", recent);
+
+            // localStorage.setItem(newCity); //add newly entered city to local storage
+            // localStorage.getItem(newCity);
+            //parse array
+            //display array as individual list items
         }
+
+        function getData();
     })
+    // return newCity, recent;
 });
 
 
