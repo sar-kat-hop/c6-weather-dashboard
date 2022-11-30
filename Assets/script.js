@@ -1,4 +1,3 @@
-var APIKey = "62eb98c3ab74f9534ab6935d0569a051";
 var city;
 // var state;
 // var zip; 
