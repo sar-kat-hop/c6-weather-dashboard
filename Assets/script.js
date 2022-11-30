@@ -1,9 +1,16 @@
+var myKey = "62eb98c3ab74f9534ab6935d0569a051";
+var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myKey;
 
-var apiKey = config.api_key;
-var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
 var city;
 // var state;
 // var zip; 
+
+var searchBar = document.getElementById("city-search");
+var weatherContainer = document.getElementById("");
+
+console.log((fetch(queryURL)));
+
+
 
 
 //this uses open weather's geocoder api, which will match city name, state, and country code
