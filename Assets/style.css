@@ -11,7 +11,11 @@
     content-visibility: hidden;
 }
 
-.float-start-visible {
+.search-history-visible {
     position: right;
     content-visibility: visible;
+}
+
+.list-group list-group-flush {
+    list-style: none;
 }

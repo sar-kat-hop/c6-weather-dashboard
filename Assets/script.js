@@ -7,23 +7,65 @@ var city;
 var coords;
 var recent = [];
 
-var searchInput = document.querySelector("#city-search");
-var searchBtn = document.querySelector("#searchBtn");
+var searchInput = $("[id=city-search]").val();
+var searchBtn = $("[id=searchBtn]");
+var searchHistory = $("[id=search-history");
+var searchList = $("ul[id=recent-list]");
+var weatherContainer = $("div[id^=day]");
 
-var searchHistoryList = document.querySelector("#history");
-var weatherContainer = document.querySelector(".card-group");
-
+// console.log($(searchList).textContent);
 // console.log((fetch(queryURL)));
 
-searchBtn.onclick = function() {
-    var newCity = searchInput.value; //capture input value only when button clicked
-    var listItem = document.createElement("li");
-    listItem.innerHTML = recent;
-    recent.push(newCity); //push new city to recent array
-    localStorage.setItem(recent, newCity);
-    console.log(recent, localStorage);
-};
+$(document).ready(function() {
+    localStorage.getItem(recent);
+    console.log(localStorage);
+    $(searchHistory).addClass("search-history-visible");
+    $(searchHistory).append()
+});
 
+$(function boop() {
+    if (localStorage != 0) {
+        console.log("stuff detected");
+        $(searchHistory).addClass("search-history-visible");
+    }
+});
+
+$(function btnEventListener() {
+    searchBtn.click(function(event) {
+        event.preventDefault();
+    })
+});
+
+$(function saveMe() {
+    searchBtn.click(function() {
+        var newCity = $(searchInput); //capture input val when button clicked
+        recent.push(newCity); //push newcity to recent array
+        localStorage.setItem(recent, newCity);
+        console.log(recent, localStorage);
+    })
+});
+
+//save up to 3 most recently searched cities 
+$(function trimRecent() {
+    if (recent.length > 3) {
+        recent.length.slice(0, 3);
+    }
+    return recent;
+});
+
+// searchBtn.onclick = function() {
+//     var newCity = searchInput.value; 
+//     recent.push(newCity);
+//     localStorage.setItem(recent, newCity);
+//     console.log(recent, localStorage);
+// };
+
+// function renderRecent() {
+//     if (recent.length != 0) {
+//         localStorage.getItem();
+//         searchHistoryList.appendChild(recent, listItem);
+//     }
+// }
 
 //this uses open weather's geocoder api, which will match city name, state, and country code
 //http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
