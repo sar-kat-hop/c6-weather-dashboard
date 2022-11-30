@@ -1,19 +1,25 @@
 var myKey = "62eb98c3ab74f9534ab6935d0569a051";
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myKey;
+var geocoder; 
+//this uses open weather's geocoder api, which will match city name, state, and country code:
+    //http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+var requestURL = "http://api.openweathermap.org/data/2.5/weather";
 
 var city = document.querySelector("#city-search").value;
+
+//will need state, country code to get coordinates using geocoder
 var state;
-var zip; 
-var coords; //will need if using geocoder API to get lat and lon coordinates
+var country;  
+var coords; 
+
 var recent = [];
 
 var searchInput = $("[id=city-search]").val();
 var searchBtn = $("[id=searchBtn]");
+var clearBtn = $("[id=clear-button]");
 var searchHistory = $("[id=search-history");
 var searchList = $("ul[id=recent-list]");
 var weatherContainer = $("div[id^=day]");
-var clearBtn = $("[id=clear-button]");
-
 
 $(document).ready(function() {
     let history = document.querySelector("#recent-list");
@@ -22,9 +28,22 @@ $(document).ready(function() {
     history.append(showHistory);
 });
 
+$.ajax({
+    url: requestURL,
+    method: "GET",
+}).then(function(response) {
+    return response;
+}).then(function(data) {
+    for (i = 0; i < data.length; i++) {
+        var listItem = document.createElement("li");
+        listItem.textContent = data[i]; //drill down further once desired info identified
+        searchList.appendChild(listItem);
+    }   
+});
+
 $(function showHistory() {
     if (localStorage != 0) {
-        $(searchHistory).addClass("search-history-visible");
+        searchHistory.addClass("search-history-visible");
     }
 });
 
@@ -32,8 +51,9 @@ $(function btnEventListener() {
     searchBtn.click(function(event) {
         event.preventDefault();
     })
-
 });
+
+searchBtn.addEventListener("click", getApi);
 
 $(function clearHistory() {
     clearBtn.click(function() {
@@ -56,12 +76,10 @@ $(function saveMe() {
             //parse array
             //display array as individual list items
         }
-
-        function getData();
+        // function getData();
     })
     // return newCity, recent;
 });
-
 
 //save up to 3 most recently searched cities 
 // $(function trimRecent() {
@@ -85,25 +103,22 @@ $(function saveMe() {
 //     }
 // }
 
-//this uses open weather's geocoder api, which will match city name, state, and country code
-//http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-
 //desired fxnality:
 //user types city name
 //matching cities suggested as user types, user clicks one to select (?)
 //user enters city name, city name is matched against JSON library of city IDs
 //api pulls city's 5-day forecast, displays each day in separate card (or list?)
 
-//TODO: link api key
-//TODO: on page load, display user's default location's weather forecast (?)
-//TODO: add functionality to city search bar to suggest cities
-//TODO: write fxn to pull, display, and save weather data to local storage once city is selected
-//TODO: write fxn to only display cards if there is content to append to them, otherwise hide them
+//TODO:
+//link api key
+//on page load, display user's default location's weather forecast?
+//add functionality to city search bar to suggest cities?
+//write fxn to pull, display, and save weather data to local storage once city is selected
+//write fxn to only show cards if there is content to append to them, otherwise keep them hidden
 
-//pseudocode
 //save user input to var city
-//match var city to city ID/name in city list.JSON
+//match var city to city ID/name in city list.JSON (or use geocoder API to get coordinates)
 //fetch/call api for city's 5-day forecast (date, icon representing conditions, temperature, wind, humidity)
 //render 5-day forecast on page
-//save rendered data to local storage, load on refresh
+//save data to local storage, load on refresh
 //add city to search history (save to local storage), display history somewhere on page
