@@ -5,12 +5,30 @@ var geocoder;
     //http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
 var requestURL = "http://api.openweathermap.org/data/2.5/weather";
 
-var city = document.querySelector("#city-search").value;
+// var city = document.querySelector("#city-search").value;
 
 //will need state, country code to get coordinates using geocoder
-var state;
-var country;  
-var coords; 
+// var state;
+// var country;  
+// var coords; 
+
+//wrap everything in jquery to make DOM nav much easier
+$(() => {
+    var searchBar = $('#city-search');
+    var searchBtn = $('#search-btn');
+    var searchHistoryEl = $('#history');
+
+    var todaysWeatherEl = $('#today');
+    var forecastEl = $('#forecast').children().eq(1);
+        console.log(forecastEl);
+
+    var recentLimit = 3;
+
+
+})
+
+
+// outdated, non-functioning code... keeping for ref during refactor
 
 var recent = [];
 
