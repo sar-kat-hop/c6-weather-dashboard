@@ -26,7 +26,7 @@ function getCoordinates(city) {
 };
 
 function getCurrentWeather(lat, lon) {
-    var URL = "https://api.openweathermap.org/data/2.5/weather?lat=" + `${lat}` + "&lon=" + `${lon}` + "&appid=" + `${myKey}`;
+    var URL = "https://api.openweathermap.org/data/2.5/weather?lat=" + `${lat}` + "&lon=" + `${lon}` + "&appid=" + `${myKey}` + "&units=imperial";
 
     return fetch(URL)
         .then(function(response) {
@@ -38,7 +38,7 @@ function getCurrentWeather(lat, lon) {
         })
         .then(function(data) {
             var temp = data.main.temp;
-            var wind = data.main.speed;
+            var wind = data.wind.speed;
             var humidity = data.main.humidity;
 
             return { temp, wind, humidity };
@@ -55,7 +55,7 @@ form.addEventListener("submit", function(event) {
             return getCurrentWeather(coords.lat, coords.lon);
         })
         .then(function(data) {
-            var {temp, description, humidity, wind } = data;
-            weatherDiv.innerHTML = `The temperature in ${city} is ${temp}° and the weather is ${description}. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
+            var {temp, humidity, wind } = data;
+            weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
         });
     });
