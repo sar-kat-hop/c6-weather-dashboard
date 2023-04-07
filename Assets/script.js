@@ -1,9 +1,9 @@
-var myKey = "62eb98c3ab74f9534ab6935d0569a051";
-var queryURL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + lat + "$lon=" + lon + "$appid=" + myKey;
-var requestURL = "http://api.openweathermap.org/data/2.5/weather";
 
 //wrap everything in jquery
 $(() => {
+    var myKey = "62eb98c3ab74f9534ab6935d0569a051";
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + lat + "$lon=" + lon + "$appid=" + myKey;
+    var requestURL = "http://api.openweathermap.org/data/2.5/weather";
     var searchBar = $('#city-search');
     var city = searchBar('input').val().trim();
     var searchBtn = $('#search-btn');
