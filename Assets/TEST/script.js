@@ -3,6 +3,17 @@ var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
 // var weatherDiv = document.getElementById("weather");
 
+//vars for creating els and appending weather info to page:
+var card = document.createElement("div");
+var cardHead = document.createElement("h4");
+var cardBody = document.createElement("div");
+
+var tempEl = document.createElement("p");
+var windEl = document.createElement("p");
+var humidEl = document.createElement("p");
+var imgEl = document.createElement("img");
+
+
 function getCoordinates(city) {
     var GEO_URL = "http://api.openweathermap.org/geo/1.0/direct?q=" + `${city}` + "&limit=1&appid=" + `${myKey}`;
 
@@ -82,13 +93,22 @@ form.addEventListener("submit", function(event) {
 
     getCoordinates(city)
         .then(function(coords) {
-            return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(lat, lon)]);
+            // return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(lat, lon)]);
+            return getCurrentWeather(coords.lat, coords.lon);
         })
         .then(function(data) {
             var {temp, humidity, wind } = data;
 
-            var 
+            var currentWeatherDiv = document.getElementById("current-weather");
+            var currentWeatherHead = document.getElementById("current-header");
+
+            
             // weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
 
         });
     });
+
+    var forecastHeader = document.getElementById("forecast-header"); //to append heading when rendering forecast data
+    var forecastDiv = document.getElementById("5day-forecast");
+
+
