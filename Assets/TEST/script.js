@@ -1,4 +1,4 @@
-var myKey = "62eb98c3ab74f9534ab6935d0569a051";
+var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
 var weatherDiv = document.getElementById("weather");
@@ -9,13 +9,13 @@ function getCoordinates(city) {
     return fetch(GEO_URL)
         .then(function(response) {
             if (!response.ok) {
-                throw error("Couldn't fetch coordinates.");
+                throw Error("Couldn't fetch coordinates.");
             }
             return response.json();
         })
         .then(function(data) {
             if (data.length === 0) {
-                throw error("Couldn't find location. Please try again.");
+                throw Error("Couldn't find location. Please try again.");
             }
             return {
                 lat: data[0].lat,
@@ -25,14 +25,14 @@ function getCoordinates(city) {
 };
 
 function getCurrentWeather(lat, lon) {
-    var URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${myKey}&units=metric`;
+    var URL = `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${myKey}`;
 
     return fetch(URL)
         .then(function(response) {
             if(response.ok) {
                 return response.json();
             } else {
-                throw error("Couldn't fetch weather.");
+                throw Error("Couldn't fetch weather.");
             }
         })
         .then(function(data) {
@@ -54,7 +54,7 @@ form.addEventListener("submit", function(event) {
             return getCurrentWeather(coords.lat, coords.lon);
         })
         .then(function(data) {
-            var {temp, description, timezone} = data;
-            weatherDiv.innerHTML = `The temperature in ${city} (${timezone}) is ${temp}°C and the weather is ${description}.`;
+            var {temp, description, humidity, wind } = data;
+            weatherDiv.innerHTML = `The temperature in ${city} is ${temp}° and the weather is ${description}. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
         });
     });
