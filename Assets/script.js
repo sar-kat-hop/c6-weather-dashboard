@@ -1,85 +1,163 @@
-var myKey = "62eb98c3ab74f9534ab6935d0569a051";
-var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myKey;
-var geocoder; 
-//this uses open weather's geocoder api, which will match city name, state, and country code:
-    //http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-var requestURL = "http://api.openweathermap.org/data/2.5/weather";
+$(() => {
+    var myKey = "62eb98c3ab74f9534ab6935d0569a051";
+    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=";
+    var geoURL = "https://api.openweathermap.org/geo/1.0/direct?q=";
 
-var city = document.querySelector("#city-search").value;
+    var requestURL = weatherURL + lat + "&lon=" + lon + "&appid=" + myKey;
 
-//will need state, country code to get coordinates using geocoder
-var state;
-var country;  
-var coords; 
+    var searchBar = $('#city-search');
+    var city = searchBar('input').val().trim();
+    var searchBtn = $('#search-btn');
+    var searchHistory = $('#history');
 
-var recent = [];
+    var todaysWeatherEl = $('#today');
+    var forecastEl = $('#forecast').children().eq(1);
 
-var searchInput = $("[id=city-search]").val();
-var searchBtn = $("[id=searchBtn]");
-var clearBtn = $("[id=clear-button]");
-var searchHistory = $("[id=search-history");
-var searchList = $("ul[id=recent-list]");
-var weatherContainer = $("div[id^=day]");
+    function showWeather(weather, El) {
+        if (El.attri('id') === 'today') {
 
-$(document).ready(function() {
-    let history = document.querySelector("#recent-list");
-    let showHistory = JSON.stringify(localStorage);
-    $(searchHistory).addClass("list-group list-group-flush");
-    history.append(showHistory);
-});
+            var iconLoc = "https://openweathermap.org/img/w" + weather.weather[0].icon + ".png";
 
-$.ajax({
-    url: requestURL,
-    method: "GET",
-}).then(function(response) {
-    return response;
-}).then(function(data) {
-    for (i = 0; i < data.length; i++) {
-        var listItem = document.createElement("li");
-        listItem.textContent = data[i]; //drill down further once desired info identified
-        searchList.appendChild(listItem);
-    }   
-});
+            El.children().eq(0).text(weather.name + ' ' + dayjs(weather.dt * 1000).format('MM/DD/YYY'));
+            El.children().eq(1).attri('src', iconLoc);
+            El.children().eq(2).text('Temp: ' + weather.main.temp + 'F');
+            El.children().eq(3).text('Wind: ' + weather.main.speed + 'mph');
+            El.children().eq(4).text('Humid.: ' + weather.main.humidity + '%');
 
-$(function showHistory() {
-    if (localStorage != 0) {
-        searchHistory.addClass("search-history-visible");
-    }
-});
+        } else {
 
-$(function btnEventListener() {
+            var iconLoc = "https://openweathermap.org/img/w/" + weather.icon + ".png";
+
+            El.children().eq(0).text(dayjs(weather.date * 1000).format('MM/DD/YYYY'));
+            El.children().eq(1).attri('src', iconLoc);
+            El.children().eq(2).text('Temp: ' + weather.temp + 'F');
+            El.children().eq(3).text('Wind: ' + weather.speed + 'mph');
+            El.children().eq(4).text('Humid.: ' + weather.humidity + '%');
+        }
+    };
+
+    //fetch reqs
+    // fetch lat and lon of city
+    function getLoc(city) {
+        var requestGeo = geoURL + city + "&limit=1&appid=" + myKey;
+
+        fetch(requestGeo).then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            getWeatherToday(data[0].lat, data[0].lon);
+            getForecast(data[0].lat, data[0].lon);
+        });
+    };
+
+    //fetch today's weather
+    function getWeatherToday(lat, lon) {
+        fetch(requestURL).then(function (res) {
+            return res.json();
+        })
+        .then(function(data) {
+            showWeather(data, todaysWeatherEl);
+        });
+    };
+
+    //fetch forecast
+    function getForecast(lat, lon) {
+        fetch(requestURL).then(function (res) {
+            return res.json();
+        })
+        .then(function(data) {
+            var forecast = data.list;
+            for (var i = 0; i < 5; i++) {
+                showWeather(forecast[x], forecastEl.children().eq(x));
+            };
+        });
+    };
+
+    //event listeners
+    searchBar.submit(function (event) {
+        event.preventDefault();
+            if (!city) {
+                return;
+            } else {
+                getLoc(city);
+            }
+    });
+
     searchBtn.click(function(event) {
         event.preventDefault();
-    })
+            if (!city) {
+                return;
+            } else {
+                getLoc(city);
+            }
+        });
 });
 
-searchBtn.addEventListener("click", getApi);
 
-$(function clearHistory() {
-    clearBtn.click(function() {
-        localStorage.clear();
-        searchHistory.children().text("");
-    })
-});
+// outdated, non-functioning code... keeping for ref during refactor
 
-$(function saveMe() {
-    searchBtn.click(function() {        
-        if (newCity != 0) {
-            var newCity = document.querySelector("#city-search").value; //can't figure out how to get value using jQuery
+// var recent = [];
+
+// var searchInput = $("[id=city-search]").val();
+// var searchBtn = $("[id=searchBtn]");
+// var clearBtn = $("[id=clear-button]");
+// var searchHistory = $("[id=search-history");
+// var searchList = $("ul[id=recent-list]");
+// var weatherContainer = $("div[id^=day]");
+
+// $(document).ready(function() {
+//     let history = document.querySelector("#recent-list");
+//     let showHistory = JSON.stringify(localStorage);
+//     $(searchHistory).addClass("list-group list-group-flush");
+//     history.append(showHistory);
+// });
+
+// $.ajax({
+//     url: requestURL,
+//     method: "GET",
+// }).then(function(response) {
+//     return response;
+// }).then(function(data) {
+//     for (i = 0; i < data.length; i++) {
+//         var listItem = document.createElement("li");
+//         listItem.textContent = data[i]; //drill down further once desired info identified
+//         searchList.appendChild(listItem);
+//     }   
+// });
+
+// $(function showHistory() {
+//     if (localStorage != 0) {
+//         searchHistory.addClass("search-history-visible");
+//     }
+// });
+
+// searchBtn.addEventListener("click", getApi);
+
+// $(function clearHistory() {
+//     clearBtn.click(function() {
+//         localStorage.clear();
+//         searchHistory.children().text("");
+//     })
+// });
+
+// $(function saveMe() {
+//     searchBtn.click(function() {        
+//         if (newCity != 0) {
+//             var newCity = document.querySelector("#city-search").value; //can't figure out how to get value using jQuery
             
-            recent.push(newCity); //push newly entered city to array 'recent'
+//             // recent.push(newCity); //push newly entered city to array 'recent'
 
-            localStorage.setItem("cityNames", recent);
+//             // localStorage.setItem("cityNames", recent);
 
-            // localStorage.setItem(newCity); //add newly entered city to local storage
-            // localStorage.getItem(newCity);
-            //parse array
-            //display array as individual list items
-        }
-        // function getData();
-    })
-    // return newCity, recent;
-});
+//             // localStorage.setItem(newCity); //add newly entered city to local storage
+//             // localStorage.getItem(newCity);
+//             //parse array
+//             //display array as individual list items
+//         }
+//         // function getData();
+//     })
+//     // return newCity, recent;
+// });
 
 //save up to 3 most recently searched cities 
 // $(function trimRecent() {
@@ -108,6 +186,9 @@ $(function saveMe() {
 //matching cities suggested as user types, user clicks one to select (?)
 //user enters city name, city name is matched against JSON library of city IDs
 //api pulls city's 5-day forecast, displays each day in separate card (or list?)
+
+
+
 
 //TODO:
 //link api key
