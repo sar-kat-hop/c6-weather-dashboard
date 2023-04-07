@@ -1,17 +1,17 @@
-
-//wrap everything in jquery
 $(() => {
     var myKey = "62eb98c3ab74f9534ab6935d0569a051";
-    var queryURL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + lat + "$lon=" + lon + "$appid=" + myKey;
-    var requestURL = "http://api.openweathermap.org/data/2.5/weather";
+    var weatherURL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=";
+    var geoURL = "https://api.openweathermap.org/geo/1.0/direct?q=";
+
+    var requestURL = weatherURL + lat + "&lon=" + lon + "&appid=" + myKey;
+
     var searchBar = $('#city-search');
     var city = searchBar('input').val().trim();
     var searchBtn = $('#search-btn');
-    var searchHistoryEl = $('#history');
+    var searchHistory = $('#history');
 
     var todaysWeatherEl = $('#today');
     var forecastEl = $('#forecast').children().eq(1);
-        console.log(forecastEl);
 
     function showWeather(weather, El) {
         if (El.attri('id') === 'today') {
@@ -38,8 +38,10 @@ $(() => {
 
     //fetch reqs
     // fetch lat and lon of city
-    function getLoc() {
-        fetch(querySelector).then(function(res) {
+    function getLoc(city) {
+        var requestGeo = geoURL + city + "&limit=1&appid=" + myKey;
+
+        fetch(requestGeo).then(function(res) {
             return res.json();
         })
         .then(function(data) {
@@ -49,8 +51,8 @@ $(() => {
     };
 
     //fetch today's weather
-    function getWeatherToday() {
-        fetch(queryURL).then(function (res) {
+    function getWeatherToday(lat, lon) {
+        fetch(requestURL).then(function (res) {
             return res.json();
         })
         .then(function(data) {
@@ -59,8 +61,8 @@ $(() => {
     };
 
     //fetch forecast
-    function getForecast() {
-        fetch(queryURL).then(function (res) {
+    function getForecast(lat, lon) {
+        fetch(requestURL).then(function (res) {
             return res.json();
         })
         .then(function(data) {
