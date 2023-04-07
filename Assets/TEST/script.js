@@ -27,7 +27,21 @@ function getCoordinates(city) {
 function getCurrentWeather(lat, lon) {
     var URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${myKey}&units=metric`;
 
-    
+    return fetch(URL)
+        .then(function(response) {
+            if(response.ok) {
+                return response.json();
+            } else {
+                throw error("Couldn't fetch weather.");
+            }
+        })
+        .then(function(data) {
+            var temp = data.main.temp;
+            var wind = data.main.speed;
+            var humidity = data.main.humidity;
+
+            return { temp, wind, humidity };
+        });
 };
 
 form.addEventListener("submit", function(event) {
