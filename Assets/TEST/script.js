@@ -1,31 +1,39 @@
-var myKey = "";
+var myKey = "62eb98c3ab74f9534ab6935d0569a051";
 var form = document.getElementById("search-form");
-var input = document.getElementById("search-input");
+var input = document.getElementById("city-input");
 var weatherDiv = document.getElementById("weather");
 
 function getCoordinates(city) {
     var GEO_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${myKey}`;
-    var response = fetch(GEO_URL);
-    var data = response.json();
-    var { lat, lon } = data[0];
 
-    return {lat, lon };
+    return fetch(GEO_URL)
+        .then(function(response) {
+            if (!response.ok) {
+                throw error("Couldn't fetch coordinates.");
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.length === 0) {
+                throw error("Couldn't find location. Please try again.");
+            }
+            return {
+                lat: data[0].lat,
+                lon: data[0].lon
+            };
+        });
 };
 
 function getCurrentWeather(lat, lon) {
     var URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${myKey}&units=metric`;
-    var response = fetch(URL);
-    var data = response.json();
-    var { temp, description } = data.current.weather[0];
-    var { timezone } = data;
+
     
-    return { temp, description, timezone };
 };
 
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    var city = input.ariaValueMax;
+    var city = input.value;
 
     getCoordinates(city)
         .then(function(coords) {
