@@ -109,6 +109,9 @@ $(function saveMe() {
 //user enters city name, city name is matched against JSON library of city IDs
 //api pulls city's 5-day forecast, displays each day in separate card (or list?)
 
+
+
+
 //TODO:
 //link api key
 //on page load, display user's default location's weather forecast?
