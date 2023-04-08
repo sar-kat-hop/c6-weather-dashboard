@@ -36,11 +36,14 @@ function getCurrentWeather(lat, lon) {
             }
         })
         .then(function(data) {
-            var temp = data.main.temp;
-            var wind = data.wind.speed;
-            var humidity = data.main.humidity;
-
-            return { temp, wind, humidity };
+            var currentWeather = {
+                date: data.dt_txt,
+                temp: data.main.temp,
+                wind: data.wind.speed,
+                humidity: data.main.humidity,
+            };
+            // return { temp, wind, humidity };
+            return currentWeather;
         });
 };
 
@@ -69,13 +72,13 @@ function get5DayForecast(lat, lon) {
             }
             return forecast;
         });
-}
+};
 
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
     var city = input.value;
-    
+
     if (!city) {
         return Error("No city entered or found.");
     }
@@ -85,32 +88,39 @@ form.addEventListener("submit", function(event) {
             // return getCurrentWeather(coords.lat, coords.lon);
             return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(lat, lon)]);
         })
-        .then(function(data) {
-            // var {temp, humidity, wind } = data;
-            var currentWeather = data[0];
-            var forecast = data[1];
+        .then(function() {
+            renderWeather();
+        });
 
-            var currentWeatherDiv = document.getElementById("current-weather");
-            var currentWeatherHead = document.getElementById("current-header");
-            var forecastHeader = document.getElementById("forecast-header"); //to append heading when rendering forecast data
-            var forecastDiv = document.getElementById("5day-forecast");
+        // .then(function(data) {
+        //     // var {temp, humidity, wind } = data;
+        //     var currentWeather = data[0];
+        //     var forecast = data[1];
 
-            var card = document.createElement("div");
-            var cardHead = document.createElement("h4");
-            var cardBody = document.createElement("div");
-
-            var tempEl = document.createElement("p");
-            var windEl = document.createElement("p");
-            var humidEl = document.createElement("p");
-            var imgEl = document.createElement("img");
-
-            // weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
+        //     // weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
 
         })
         .catch(function(error) {
             console.log("Error:" + error);
         });
-    });
+    // });
 
+function renderWeather(currentWeather, forecast) {
+    var currentWeatherDiv = document.getElementById("current-weather");
+    var currentWeatherHead = document.getElementById("current-header");
+    var forecastHeader = document.getElementById("forecast-header"); 
+    var forecastDiv = document.getElementById("5day-forecast");
+
+    var card = document.createElement("div");
+    var cardHead = document.createElement("h4");
+    var cardBody = document.createElement("div");
+
+    var tempEl = document.createElement("p");
+    var windEl = document.createElement("p");
+    var humidEl = document.createElement("p");
+    var imgEl = document.createElement("img");
+
+    
+}
 
 
