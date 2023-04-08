@@ -15,16 +15,19 @@ function getCoordinates(city) {
             return response.json();
         })
         .then(function(data) {
+            var lat = data[0].lat;
+            var lon = data[0].lon;
 
             if (data.length === 0) {
                 throw Error("Couldn't find location. Please try again.");
             }
+
+            console.log(lat, lon);
+
             return {
-                lat: data[0].lat,
-                lon: data[0].lon
-                // lat: data.coord.lat,
-                // lon: data.coord.lon
-            };
+                // lat: data[0].lat,
+                // lon: data[0].lon
+                lat, lon };
         });
 };
 
@@ -77,7 +80,7 @@ function get5DayForecast(lat, lon) {
         });
 };
 
-function renderWeather(currentWeather, forecast) {
+function renderWeather() {
     var currentWeatherDiv = document.getElementById("current-weather");
     // var currentWeatherHead = document.getElementById("current-header");
     var forecastHeader = document.getElementById("forecast-header"); 
@@ -115,41 +118,77 @@ function renderWeather(currentWeather, forecast) {
 
 // event listeners for form submit 
 function handleSearch(event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
-    // get coords
-    var city = input.value;
-    var coords = getCoordinates(city);
+    //call getCoordinates
+        //extract lat and lon from getCoordinates result
+    //pass lat and lon to getCurrentWeather
+        //extract current weather data from result
+    //pass lat and lon to getForecast
+        //extract forecast data from result
+    //pass current weather data and forecast data to renderWeather
+
+    getCoordinates()
+        .then(function() {
+            return Promise.all([getCurrentWeather(), get5DayForecast()]) //not sure if I need to pass in lat, lon as args here since it's done in the function itself above...
+        })
+        .then(function([currentWeather], [forecast]) {
+            //call renderWeather here
+            renderWeather(currentWeather, forecast);
+        })
+        .catch(function(error) {
+            console.log("Error in handleSearch(): " + error);
+        });
+};
+
+
+
+
+
+
+// I cannot get this to work. Issues with passing the coordinates to getCurrentWeather and getForecast, and then passing those results to renderWeather.
+
+// function handleSearch(event) {
+//     event.preventDefault();
+
+//     // get coords
+//     var city = input.value;
+//     var coords = getCoordinates(city);
     
-    // get current weather and forecast by passing coordinates in to fxns correctly
-    coords
-    .then(function(coordinates) {
-            var currentWeather = getCurrentWeather(coordinates.lat, coordinates.lon);
-            var forecast = get5DayForecast(coordinates.lat, coordinates.lon);
-            
-            Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
+//     // get current weather and forecast by passing coordinates in to fxns correctly
 
-            console.log(coordinates);
+//     coords
+//     .then(function(coordinates) {
+//             var currentWeather = getCurrentWeather(coordinates.lat, coordinates.lon);
+//             var forecast = get5DayForecast(coordinates.lat, coordinates.lon);
+            
+            // Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)])
+            //     .then(function([currentWeather, forecast]) {
+            //         console.log(currentWeather, forecast);
+                    //resolve promises so renderWeather can be called and have the right data passed to it 
+                    // return renderWeather(currentWeather, forecast);
+                // });
+
+            // console.log(coordinates); //confirmed coordinates are being fetched correctly
 
             //these are being logged as pending promises ... need to fix fxn to use .then
-            console.log(currentWeather);
-            console.log(forecast);
+                // console.log(currentWeather);
+                // console.log(forecast);
 
-            // return {}
 
             //currentWeather and forecast aren't being defined properly by calling them (I think...)
 
                 // return { currentWeather, forecast };
                 // return renderWeather(currentWeather, forecast);
-        })
+        // })
         // .then(function([currentWeather, forecast]) {
         //     //render weather on page
         //     renderWeather(currentWeather, forecast);
         // })
-        .catch(function(error) {
-            console.log("Error encountered in handleSearch(): " + error);
-        });
-};
+        // .catch(function(error) {
+        //     console.log("Error encountered in handleSearch(): " + error);
+        // });
+// };
 
 form.addEventListener("submit", handleSearch);
 // btn.addEventListener("click", handleSearch);
