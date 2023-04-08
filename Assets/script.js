@@ -74,35 +74,6 @@ function get5DayForecast(lat, lon) {
         });
 };
 
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    var city = input.value;
-
-    if (!city) {
-        return Error("No city entered or found.");
-    }
-
-    getCoordinates(city)
-        .then(function(coords) {
-            // return getCurrentWeather(coords.lat, coords.lon);
-            return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(coords.lat, coords. lon)]);
-        })
-        // .then(function(data) {
-        //     // var {temp, humidity, wind } = data;
-        //     var currentWeather = data[0];
-        //     var forecast = data[1];
-
-        //     return renderWeather(currentWeather, forecast);
-        // })
-        // .then(function() {
-
-        // })
-        .catch(function(error) {
-            console.log("Error:" + error);
-        });
-    });
-
 function renderWeather(currentWeather, forecast) {
     var currentWeatherDiv = document.getElementById("current-weather");
     // var currentWeatherHead = document.getElementById("current-header");
@@ -138,4 +109,44 @@ function renderWeather(currentWeather, forecast) {
     forecastDiv.innerHTML = dailyForecastContent;
 };
 
+// event listeners for form submit 
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
+    var city = input.value;
+
+    if (!city) {
+        return Error("No city entered or found. Please try again.");
+    } else {
+        getCoordinates(city)
+            .then(function(coords) {
+                return getCurrentWeather(coords.lat, coords.lon);
+            })
+            .then(function(currentWeather) {
+                renderWeather(currentWeather);
+            })
+            .catch(function(error) {
+                console.log("Error: could not get coordinates for current weather. " + error);
+            });
+    };
+});
+
+// form.addEventListener("submit", function(event) {
+//     event.preventDefault();
+//     var city = input.value;
+
+//     if (!city) {
+//         return Error("No city entered or found. Please try again.");
+//     } else {
+//         getCoordinates(city)
+//             .then(function(coords) {
+//                 return get5DayForecast(coords.lat, coords.lon);
+//             })
+//             .then(function(forecast) {
+//                 renderWeather(forecast);
+//             })
+//             .catch(function(error) {
+//                 console.log("Error: could not get coordinates for forecast. " + error);
+//             });
+//     };
+// });
