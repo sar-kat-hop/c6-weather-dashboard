@@ -2,6 +2,7 @@ var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
 var btn = document.getElementById("search-btn");
+
 // var city = input.value;
 // var weatherDiv = document.getElementById("weather");
 
@@ -40,12 +41,17 @@ function getCurrentWeather(lat, lon) {
             }
         })
         .then(function(data) {
+
             var currentWeather = {
                 // date: data.dt_txt,
+                // icon: data.main.weather[0].icon,
                 temp: data.main.temp,
                 wind: data.wind.speed,
                 humidity: data.main.humidity,
             };
+
+            console.log(currentWeather);
+
             return currentWeather;
         });
 };
@@ -62,21 +68,36 @@ function get5DayForecast(lat, lon) {
             }
         })
         .then(function(data) {
-            // console.log(data.list[0]);
 
             var forecast = [];
 
-            for (let i = 0; i < data.length; i += 8) {  //OpenWeather returns forecast data for every 3 hours. i += 8 skips over 8 items it'll return for the 5-day forecast so we only get the by-day info we're looking for. This loop adds 8 to i every iteration, processingly only for every 24 hours (8*3 = 24).
+            for ( let i = 8; i < data.list.length && i < 8 * 5; i += 8) { //start at index 8, since 0-7 are for current day, and skip every 8 indices. Stop after 5 iterations, collecting info for 5 days.
                 var forecastDay = {
-                    date: data.list[0].dt_txt,
-                    temp: data.list[0].main.temp,
-                    wind: data.list[0].wind.speed,
-                    humidity: data.list[0].main.humidity,
+                    temp: data.list[i].main.temp,
+                    wind: data.list[i].wind.speed,
+                    humidity: data.list[i].main.humidity
                 };
+                
                 forecast.push(forecastDay);
-            }
-            console.log(forecast);
-            return forecast;
+
+                }
+
+                console.log(forecast);
+
+            // code below not working
+            // var forecast = [];
+
+            // for (let i = 0; i < data.length; i += 8) {  //OpenWeather returns forecast data for every 3 hours. i += 8 skips over 8 items it'll return for the 5-day forecast so we only get the by-day info we're looking for. This loop adds 8 to i every iteration, processingly only for every 24 hours (8*3 = 24).
+            //     var forecastDay = {
+            //         date: data.list[0].dt_txt,
+            //         temp: data.list[0].main.temp,
+            //         wind: data.list[0].wind.speed,
+            //         humidity: data.list[0].main.humidity,
+            //     };
+            //     forecast.push(forecastDay);
+            // }
+            // console.log(forecast);
+            // return forecast;
         });
 };
 
@@ -134,6 +155,7 @@ function handleSearch(event) {
         console.error("No city entered or city not found. Please try again.");
         return;
     }
+
     getCoordinates(city)
         .then(function(result) { //this returns lat and lon
             console.log(result);
