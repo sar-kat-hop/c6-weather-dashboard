@@ -1,6 +1,7 @@
 var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
+var btn = document.getElementById("search-btn");
 // var weatherDiv = document.getElementById("weather");
 
 function getCoordinates(city) {
@@ -110,26 +111,46 @@ function renderWeather(currentWeather, forecast) {
 };
 
 // event listeners for form submit 
-form.addEventListener("submit", function(event) {
+function handleSearch(event) {
     event.preventDefault();
 
+    // get coords
     var city = input.value;
+    var { lat, lon } = getCoordinates(city);
 
-    if (!city) {
-        return Error("No city entered or found. Please try again.");
-    } else {
-        getCoordinates(city)
-            .then(function(coords) {
-                return getCurrentWeather(coords.lat, coords.lon);
-            })
-            .then(function(currentWeather) {
-                renderWeather(currentWeather);
-            })
-            .catch(function(error) {
-                console.log("Error: could not get coordinates for current weather. " + error);
-            });
-    };
-});
+    // get current weather and forecast
+    var currentWeather = getCurrentWeather(lat, lon);
+    var forecast = get5DayForecast(lat, lon);
+
+    //render weather on page
+    renderWeather(currentWeather, forecast);
+};
+
+form.addEventListener("submit", handleSearch);
+// btn.addEventListener("click", handleSearch);
+
+
+// old event listeners that don't work together. Only current weather worked.
+// form.addEventListener("submit", function(event) {
+//     event.preventDefault();
+
+//     var city = input.value;
+
+//     if (!city) {
+//         return Error("No city entered or found. Please try again.");
+//     } else {
+//         getCoordinates(city)
+//             .then(function(coords) {
+//                 return getCurrentWeather(coords.lat, coords.lon);
+//             })
+//             .then(function(currentWeather) {
+//                 renderWeather(currentWeather);
+//             })
+//             .catch(function(error) {
+//                 console.log("Error: could not get coordinates for current weather. " + error);
+//             });
+//     };
+// });
 
 // form.addEventListener("submit", function(event) {
 //     event.preventDefault();
