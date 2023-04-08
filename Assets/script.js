@@ -2,6 +2,7 @@ var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
 var btn = document.getElementById("search-btn");
+// var city = input.value;
 // var weatherDiv = document.getElementById("weather");
 
 function getCoordinates(city) {
@@ -15,19 +16,15 @@ function getCoordinates(city) {
             return response.json();
         })
         .then(function(data) {
-            var lat = data[0].lat;
-            var lon = data[0].lon;
 
             if (data.length === 0) {
                 throw Error("Couldn't find location. Please try again.");
             }
 
-            console.log(lat, lon);
+            console.log(data);
+            console.log(data[0].lat, data[0].lon); 
 
-            return {
-                // lat: data[0].lat,
-                // lon: data[0].lon
-                lat, lon };
+            return { lat: data[0].lat, lon: data[0].lon };
         });
 };
 
@@ -80,7 +77,7 @@ function get5DayForecast(lat, lon) {
         });
 };
 
-function renderWeather() {
+function renderWeather(currentWeather, forecast) {
     var currentWeatherDiv = document.getElementById("current-weather");
     // var currentWeatherHead = document.getElementById("current-header");
     var forecastHeader = document.getElementById("forecast-header"); 
@@ -103,12 +100,12 @@ function renderWeather() {
     for (i = 0; i < forecast.length; i++) {
         dailyForecastContent = `
             <div class="card">
-                <h4> ${forcast[i].date} </h4> 
-                <ul>
-                    <li> Temp: ${forecast[i].temp} F </li>
-                    <li> Wind: ${forecast[i].wind} mph </li>
-                    <li> Humidity: ${forecast[i].humidity} % </li>
-                </ul>
+                // <h4> ${forecast[i].date} </h4> 
+                // <ul>
+                //     <li> Temp: ${forecast[i].temp} F </li>
+                //     <li> Wind: ${forecast[i].wind} mph </li>
+                //     <li> Humidity: ${forecast[i].humidity} % </li>
+                // </ul>
             </div>
         `;
 
@@ -128,16 +125,24 @@ function handleSearch(event) {
         //extract forecast data from result
     //pass current weather data and forecast data to renderWeather
 
-    getCoordinates()
-        .then(function() {
-            return Promise.all([getCurrentWeather(), get5DayForecast()]) //not sure if I need to pass in lat, lon as args here since it's done in the function itself above...
+    var city = input.value;
+
+    if (!city) {
+        console.error("No city entered or city not found. Please try again.");
+        return;
+    }
+    getCoordinates(city)
+        .then(function(result) { //this returns lat and lon
+            console.log(result);
+
+            return Promise.all([getCurrentWeather(result.lat, result.lon), get5DayForecast(result.lat, result.lon)]) //not sure if I need to pass in lat, lon as args here since they're passed in to the fxns themselves above
         })
         .then(function([currentWeather], [forecast]) {
             //call renderWeather here
             renderWeather(currentWeather, forecast);
         })
         .catch(function(error) {
-            console.log("Error in handleSearch(): " + error);
+            console.log("Error caught in handleSearch(). " + error);
         });
 };
 
@@ -145,9 +150,7 @@ function handleSearch(event) {
 
 
 
-
 // I cannot get this to work. Issues with passing the coordinates to getCurrentWeather and getForecast, and then passing those results to renderWeather.
-
 // function handleSearch(event) {
 //     event.preventDefault();
 
