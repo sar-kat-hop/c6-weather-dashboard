@@ -120,46 +120,50 @@ function handleSearch(event) {
     // get coords
     var city = input.value;
     var coords = getCoordinates(city);
-    // var currentWeather = getCurrentWeather(coords.lat, coords.lon);
-    // var forecast = get5DayForecast(coords.lat, coords.lon);
-
+    
     // get current weather and forecast by passing coordinates in to fxns correctly
-    coords.then(function(coordinates) {
-        return Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
-    })
-    .then(function([currentWeather, forecast]) {
-        //render weather on page
-        renderWeather(currentWeather, forecast);
-    })
-    .catch(function(error) {
-        console.log("Error encountered in handleSearch(): " + error);
-    });
+    coords
+    .then(function(coordinates) {
+            var currentWeather = getCurrentWeather(coords.lat, coords.lon);
+            var forecast = get5DayForecast(coords.lat, coords.lon);
+            // return Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
+            console.log(coordinates);
+
+            return { currentWeather, forecast };
+        })
+        .then(function([currentWeather, forecast]) {
+            //render weather on page
+            renderWeather(currentWeather, forecast);
+        })
+        .catch(function(error) {
+            console.log("Error encountered in handleSearch(): " + error);
+        });
 };
 
 form.addEventListener("submit", handleSearch);
 // btn.addEventListener("click", handleSearch);
 
 // old event listeners that don't work together. Only current weather worked.
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
+// form.addEventListener("submit", function(event) {
+//     event.preventDefault();
 
-    var city = input.value;
+//     var city = input.value;
 
-    if (!city) {
-        return Error("No city entered or found. Please try again.");
-    } else {
-        getCoordinates(city)
-            .then(function(coords) {
-                return getCurrentWeather(coords.lat, coords.lon);
-            })
-            .then(function(currentWeather) {
-                renderWeather(currentWeather);
-            })
-            .catch(function(error) {
-                console.log("Error: could not get coordinates for current weather. " + error);
-            });
-    };
-});
+//     if (!city) {
+//         return Error("No city entered or found. Please try again.");
+//     } else {
+//         getCoordinates(city)
+//             .then(function(coords) {
+//                 return getCurrentWeather(coords.lat, coords.lon);
+//             })
+//             .then(function(currentWeather) {
+//                 renderWeather(currentWeather);
+//             })
+//             .catch(function(error) {
+//                 console.log("Error: could not get coordinates for current weather. " + error);
+//             });
+//     };
+// });
 
 // form.addEventListener("submit", function(event) {
 //     event.preventDefault();
