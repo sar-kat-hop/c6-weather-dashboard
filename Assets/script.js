@@ -15,12 +15,15 @@ function getCoordinates(city) {
             return response.json();
         })
         .then(function(data) {
+
             if (data.length === 0) {
                 throw Error("Couldn't find location. Please try again.");
             }
             return {
                 lat: data[0].lat,
                 lon: data[0].lon
+                // lat: data.coord.lat,
+                // lon: data.coord.lon
             };
         });
 };
@@ -38,7 +41,7 @@ function getCurrentWeather(lat, lon) {
         })
         .then(function(data) {
             var currentWeather = {
-                date: data.dt_txt,
+                // date: data.dt_txt,
                 temp: data.main.temp,
                 wind: data.wind.speed,
                 humidity: data.main.humidity,
@@ -64,7 +67,7 @@ function get5DayForecast(lat, lon) {
 
             for (let i = 0; i < data.length; i += 8) {  //OpenWeather returns forecast data for every 3 hours. i += 8 skips over 8 items it'll return for the 5-day forecast so we only get the by-day info we're looking for. This loop adds 8 to i every iteration, processingly only for every 24 hours (8*3 = 24).
                 var forecastDay = {
-                    date: data.list[i].dt_txt,
+                    // date: data.list[i].dt_txt,
                     temp: data.list[i].main.temp,
                     wind: data.list[i].wind.speed,
                     humidity: data.list[i].main.humidity,
@@ -116,41 +119,47 @@ function handleSearch(event) {
 
     // get coords
     var city = input.value;
-    var { lat, lon } = getCoordinates(city);
+    var coords = getCoordinates(city);
+    // var currentWeather = getCurrentWeather(coords.lat, coords.lon);
+    // var forecast = get5DayForecast(coords.lat, coords.lon);
 
-    // get current weather and forecast
-    var currentWeather = getCurrentWeather(lat, lon);
-    var forecast = get5DayForecast(lat, lon);
-
-    //render weather on page
-    renderWeather(currentWeather, forecast);
+    // get current weather and forecast by passing coordinates in to fxns correctly
+    coords.then(function(coordinates) {
+        return Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
+    })
+    .then(function([currentWeather, forecast]) {
+        //render weather on page
+        renderWeather(currentWeather, forecast);
+    })
+    .catch(function(error) {
+        console.log("Error encountered in handleSearch(): " + error);
+    });
 };
 
 form.addEventListener("submit", handleSearch);
 // btn.addEventListener("click", handleSearch);
 
-
 // old event listeners that don't work together. Only current weather worked.
-// form.addEventListener("submit", function(event) {
-//     event.preventDefault();
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-//     var city = input.value;
+    var city = input.value;
 
-//     if (!city) {
-//         return Error("No city entered or found. Please try again.");
-//     } else {
-//         getCoordinates(city)
-//             .then(function(coords) {
-//                 return getCurrentWeather(coords.lat, coords.lon);
-//             })
-//             .then(function(currentWeather) {
-//                 renderWeather(currentWeather);
-//             })
-//             .catch(function(error) {
-//                 console.log("Error: could not get coordinates for current weather. " + error);
-//             });
-//     };
-// });
+    if (!city) {
+        return Error("No city entered or found. Please try again.");
+    } else {
+        getCoordinates(city)
+            .then(function(coords) {
+                return getCurrentWeather(coords.lat, coords.lon);
+            })
+            .then(function(currentWeather) {
+                renderWeather(currentWeather);
+            })
+            .catch(function(error) {
+                console.log("Error: could not get coordinates for current weather. " + error);
+            });
+    };
+});
 
 // form.addEventListener("submit", function(event) {
 //     event.preventDefault();
