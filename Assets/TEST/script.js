@@ -86,41 +86,56 @@ form.addEventListener("submit", function(event) {
     getCoordinates(city)
         .then(function(coords) {
             // return getCurrentWeather(coords.lat, coords.lon);
-            return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(lat, lon)]);
+            return Promise.all([getCurrentWeather(coords.lat, coords.lon), get5DayForecast(coords.lat, coords. lon)]);
         })
-        .then(function() {
-            renderWeather();
-        });
-
         // .then(function(data) {
         //     // var {temp, humidity, wind } = data;
         //     var currentWeather = data[0];
         //     var forecast = data[1];
 
-        //     // weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
+        //     return renderWeather(currentWeather, forecast);
+        // })
+        // .then(function() {
 
-        })
+        // })
         .catch(function(error) {
             console.log("Error:" + error);
         });
-    // });
+    });
 
 function renderWeather(currentWeather, forecast) {
     var currentWeatherDiv = document.getElementById("current-weather");
-    var currentWeatherHead = document.getElementById("current-header");
-    var forecastHeader = document.getElementById("forecast-header"); 
+    // var currentWeatherHead = document.getElementById("current-header");
+    // var forecastHeader = document.getElementById("forecast-header"); 
     var forecastDiv = document.getElementById("5day-forecast");
 
-    var card = document.createElement("div");
-    var cardHead = document.createElement("h4");
-    var cardBody = document.createElement("div");
+    var currentWeatherContent = `
+        <h2 class=""> Current Weather </h2>
+        <img src="" alt=""> 
+        <ul>
+            <li> Temp: ${currentWeather.temp} F </li>
+            <li> Wind: ${currentWeather.wind} mph </li>
+            <li> Humidity: ${currentWeather.humidity}% </li>
+        </ul>
+    `;
 
-    var tempEl = document.createElement("p");
-    var windEl = document.createElement("p");
-    var humidEl = document.createElement("p");
-    var imgEl = document.createElement("img");
+    currentWeatherDiv.innerHTML = currentWeatherContent;
 
-    
-}
+    forecastHeader.innerHTML = "5-Day Forecast";
+
+    for (i = 0; i < forecast.length; i++) {
+        dailyForecastContent += `
+            <div class="card">
+                <h4> Day ${i+1} </h4> 
+                <ul>
+                    <li> Temp: ${forecast[i].temp} F </li>
+                    <li> Wind: ${forecast[i].wind} mph </li>
+                    <li> Humidity: ${forecast[i].humidity} % </li>
+                </ul>
+            </div>
+        `;
+    }
+    forecastDiv.innerHTML = dailyForecastContent;
+};
 
 
