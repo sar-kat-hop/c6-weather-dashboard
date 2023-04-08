@@ -46,7 +46,6 @@ function getCurrentWeather(lat, lon) {
                 wind: data.wind.speed,
                 humidity: data.main.humidity,
             };
-            // return { temp, wind, humidity };
             return currentWeather;
         });
 };
@@ -81,7 +80,7 @@ function get5DayForecast(lat, lon) {
 function renderWeather(currentWeather, forecast) {
     var currentWeatherDiv = document.getElementById("current-weather");
     // var currentWeatherHead = document.getElementById("current-header");
-    // var forecastHeader = document.getElementById("forecast-header"); 
+    var forecastHeader = document.getElementById("forecast-header"); 
     var forecastDiv = document.getElementById("5day-forecast");
 
     var currentWeatherContent = `
@@ -99,9 +98,9 @@ function renderWeather(currentWeather, forecast) {
     forecastHeader.innerHTML = "5-Day Forecast";
 
     for (i = 0; i < forecast.length; i++) {
-        dailyForecastContent += `
+        dailyForecastContent = `
             <div class="card">
-                <h4> Day ${i+1} </h4> 
+                <h4> ${forcast[i].date} </h4> 
                 <ul>
                     <li> Temp: ${forecast[i].temp} F </li>
                     <li> Wind: ${forecast[i].wind} mph </li>
@@ -109,8 +108,9 @@ function renderWeather(currentWeather, forecast) {
                 </ul>
             </div>
         `;
-    }
-    forecastDiv.innerHTML = dailyForecastContent;
+
+        forecastDiv.innerHTML = dailyForecastContent;
+    };
 };
 
 // event listeners for form submit 
@@ -124,17 +124,28 @@ function handleSearch(event) {
     // get current weather and forecast by passing coordinates in to fxns correctly
     coords
     .then(function(coordinates) {
-            var currentWeather = getCurrentWeather(coords.lat, coords.lon);
-            var forecast = get5DayForecast(coords.lat, coords.lon);
-            // return Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
+            var currentWeather = getCurrentWeather(coordinates.lat, coordinates.lon);
+            var forecast = get5DayForecast(coordinates.lat, coordinates.lon);
+            
+            Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)]);
+
             console.log(coordinates);
 
-            return { currentWeather, forecast };
+            //these are being logged as pending promises ... need to fix fxn to use .then
+            console.log(currentWeather);
+            console.log(forecast);
+
+            // return {}
+
+            //currentWeather and forecast aren't being defined properly by calling them (I think...)
+
+                // return { currentWeather, forecast };
+                // return renderWeather(currentWeather, forecast);
         })
-        .then(function([currentWeather, forecast]) {
-            //render weather on page
-            renderWeather(currentWeather, forecast);
-        })
+        // .then(function([currentWeather, forecast]) {
+        //     //render weather on page
+        //     renderWeather(currentWeather, forecast);
+        // })
         .catch(function(error) {
             console.log("Error encountered in handleSearch(): " + error);
         });
