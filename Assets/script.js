@@ -62,17 +62,20 @@ function get5DayForecast(lat, lon) {
             }
         })
         .then(function(data) {
+            // console.log(data.list[0]);
+
             var forecast = [];
 
             for (let i = 0; i < data.length; i += 8) {  //OpenWeather returns forecast data for every 3 hours. i += 8 skips over 8 items it'll return for the 5-day forecast so we only get the by-day info we're looking for. This loop adds 8 to i every iteration, processingly only for every 24 hours (8*3 = 24).
                 var forecastDay = {
-                    // date: data.list[i].dt_txt,
-                    temp: data.list[i].main.temp,
-                    wind: data.list[i].wind.speed,
-                    humidity: data.list[i].main.humidity,
+                    date: data.list[0].dt_txt,
+                    temp: data.list[0].main.temp,
+                    wind: data.list[0].wind.speed,
+                    humidity: data.list[0].main.humidity,
                 };
                 forecast.push(forecastDay);
             }
+            console.log(forecast);
             return forecast;
         });
 };
