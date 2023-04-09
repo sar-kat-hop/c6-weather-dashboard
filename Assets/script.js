@@ -1,13 +1,10 @@
 var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
-var btn = document.getElementById("search-btn");
-
-// var city = input.value;
-// var weatherDiv = document.getElementById("weather");
 
 function getCoordinates(city) {
     var GEO_URL = "http://api.openweathermap.org/geo/1.0/direct?q=" + `${city}` + "&limit=1&appid=" + `${myKey}`;
+
 
     return fetch(GEO_URL)
         .then(function(response) {
@@ -17,248 +14,203 @@ function getCoordinates(city) {
             return response.json();
         })
         .then(function(data) {
-
             if (data.length === 0) {
                 throw Error("Couldn't find location. Please try again.");
             }
 
+            // console.log("getCoordinates result: " + data);
             console.log(data);
-            console.log(data[0].lat, data[0].lon); 
 
-            return { lat: data[0].lat, lon: data[0].lon };
+            return {
+                lat: data[0].lat,
+                lon: data[0].lon
+            };
         });
 };
 
+// 45.4871723
+// -122.80378
+
 function getCurrentWeather(lat, lon) {
-    var URL = "https://api.openweathermap.org/data/2.5/weather?lat=" + `${lat}` + "&lon=" + `${lon}` + "&appid=" + `${myKey}` + "&units=imperial";
+
+    var URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${myKey}&units=imperial`;
+
+    // var URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${myKey}$units=imperial`;
 
     return fetch(URL)
         .then(function(response) {
             if(response.ok) {
                 return response.json();
             } else {
-                throw Error("Couldn't fetch current weather.");
+                throw Error("Couldn't fetch weather.");
             }
         })
         .then(function(data) {
-
             var currentWeather = {
-                // date: data.dt_txt,
-                // icon: data.main.weather[0].icon,
                 temp: data.main.temp,
                 wind: data.wind.speed,
-                humidity: data.main.humidity,
-            };
-
-            console.log(currentWeather);
-
+                humidity: data.main.humidity
+            }
             return currentWeather;
         });
 };
 
-function get5DayForecast(lat, lon) {
-    var URL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + `${lat}` + "&lon=" + `${lon}` + "&appid=" + `${myKey}` + "&units=imperial";
+// api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
 
+//5-day forecast info:
+// list.main.temp, list.main.humidity, list.weather.icon, list.wind.speed
+// index 0 in list is today's date, index 8 is the next day, & so forth. One possibility is to grab only the specific days... 8, 16, 24, 32, 40
+
+function getForecast(lat, lon) {
+    var URL = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myKey}&units=imperial`;
+
+    //5-day forecast
     return fetch(URL)
         .then(function(response) {
             if(response.ok) {
                 return response.json();
             } else {
-                throw Error("Couldn't fetch 5-day forecast.");
+                throw Error("Couldn't fetch weather forecast.");
             }
         })
         .then(function(data) {
 
+            console.log(data); 
+            console.log(data.list[0].dt_txt);
+            console.log(data.list[0].main.temp);
+            console.log(data.list[0].wind.speed);
+            console.log(data.list[0].main.humidity);
+
             var forecast = [];
 
-            for ( let i = 8; i < data.list.length && i < 8 * 5; i += 8) { //start at index 8, since 0-7 are for current day, and skip every 8 indices. Stop after 5 iterations, collecting info for 5 days.
+            for ( let i = 0; i < data.list.length && i < 8 * 5; i += 8) { //start at index 8, since 0-7 are for current day, and skip every 8 indices. Stop after 5 iterations, collecting info for 5 days.
                 var forecastDay = {
+                    date: data.list[i].dt_txt,
                     temp: data.list[i].main.temp,
                     wind: data.list[i].wind.speed,
                     humidity: data.list[i].main.humidity
                 };
-                
                 forecast.push(forecastDay);
-
                 }
-
                 console.log(forecast);
-
-            // code below not working
-            // var forecast = [];
-
-            // for (let i = 0; i < data.length; i += 8) {  //OpenWeather returns forecast data for every 3 hours. i += 8 skips over 8 items it'll return for the 5-day forecast so we only get the by-day info we're looking for. This loop adds 8 to i every iteration, processingly only for every 24 hours (8*3 = 24).
-            //     var forecastDay = {
-            //         date: data.list[0].dt_txt,
-            //         temp: data.list[0].main.temp,
-            //         wind: data.list[0].wind.speed,
-            //         humidity: data.list[0].main.humidity,
-            //     };
-            //     forecast.push(forecastDay);
-            // }
-            // console.log(forecast);
-            // return forecast;
+                renderForecast(forecast);
+        })
+        .catch(function(error) {
+            console.log("Error caught in getForecast(). " + error);
         });
 };
 
-function renderWeather(currentWeather, forecast) {
-    var currentWeatherDiv = document.getElementById("current-weather");
-    // var currentWeatherHead = document.getElementById("current-header");
-    var forecastHeader = document.getElementById("forecast-header"); 
-    var forecastDiv = document.getElementById("5day-forecast");
+//5-day forecast content rendering
+function renderForecast(forecastData) {
+    for ( let i = 0; i < forecastData.length; i++) {    //iterate over forecast array to render info to page
+        var forecastDiv = document.getElementById("weather-forecast");
+        var forecastHeading = document.getElementById("forecast-header");
+        forecastHeading.textContent = "5-Day Forecast";
+            forecastHeading.setAttribute("class", "fw-light fs-4")
 
-    var currentWeatherContent = `
-        <h2 class=""> Current Weather </h2>
-        <img src="" alt=""> 
-        <ul>
-            <li> Temp: ${currentWeather.temp} F </li>
-            <li> Wind: ${currentWeather.wind} mph </li>
-            <li> Humidity: ${currentWeather.humidity}% </li>
-        </ul>
-    `;
-
-    currentWeatherDiv.innerHTML = currentWeatherContent;
-
-    forecastHeader.innerHTML = "5-Day Forecast";
-
-    for (i = 0; i < forecast.length; i++) {
-        dailyForecastContent = `
-            <div class="card">
-                // <h4> ${forecast[i].date} </h4> 
-                // <ul>
-                //     <li> Temp: ${forecast[i].temp} F </li>
-                //     <li> Wind: ${forecast[i].wind} mph </li>
-                //     <li> Humidity: ${forecast[i].humidity} % </li>
-                // </ul>
-            </div>
+        //make a new div for every forecast day
+        dailyForecastCard = document.createElement("div");
+        // card.setAttribute()
+        forecastCardBody = document.createElement("div");
+        forecastCardBody.innerHTML = `
+            <h4>Date: ${forecastData[i].date} </h4>
+            <img src="">
+                <p>Temp: ${forecastData[i].temp}</p>
+                <p>Wind: ${forecastData[i].wind}</p>
+                <p>Humidity: ${forecastData[i].humidity}</p>
+            <br>
         `;
 
-        forecastDiv.innerHTML = dailyForecastContent;
-    };
+        dailyForecastCard.appendChild(forecastCardBody);
+        dailyForecastCard.setAttribute("class", "border border-light bg-light col p-4 me-2 mb-2")
+            forecastDiv.append(dailyForecastCard);
+        };
 };
 
-// event listeners for form submit 
-function handleSearch(event) {
-    event.preventDefault(); 
+//current weather rendering
+function renderCurrentWeather(currentWeatherData) {
+    
+    var currentWeatherDiv = document.getElementById("weather-current");
+    var currentWeatherHeading = document.getElementById("current-header");
+    // currentWeatherDiv.append(currentWeatherHeading);
+    currentWeatherHeading.textContent = "Today's Weather";
+        currentWeatherHeading.setAttribute("class", "fw-light fs-4");
 
-    //call getCoordinates
-        //extract lat and lon from getCoordinates result
-    //pass lat and lon to getCurrentWeather
-        //extract current weather data from result
-    //pass lat and lon to getForecast
-        //extract forecast data from result
-    //pass current weather data and forecast data to renderWeather
+    todayCard = document.createElement("div");
+    todayCard.setAttribute("class", "p-3 border border-light");
+    todayCardBody = document.createElement("div");
+    todayCardBody.innerHTML = `
+        <img src="">
+        <p>Temp: ${currentWeatherData.temp} </p>
+        <p>Wind: ${currentWeatherData.wind} </p>
+        <p>Humidity: ${currentWeatherData.humidity} </p>
+        <hr>
+    `;
+
+    todayCard.appendChild(todayCardBody);
+        currentWeatherDiv.append(todayCard);        
+};
+
+function clearPage() {
+    var currentWeatherDiv = document.getElementById("weather-current");
+    currentWeatherDiv.empty();
+
+    var forecastDiv = document.getElementById("weather-forecast");
+    forecastDiv.empty();
+
+    return;
+};
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
     var city = input.value;
 
-    if (!city) {
-        console.error("No city entered or city not found. Please try again.");
-        return;
-    }
-
     getCoordinates(city)
-        .then(function(result) { //this returns lat and lon
-            console.log(result);
-
-            return Promise.all([getCurrentWeather(result.lat, result.lon), get5DayForecast(result.lat, result.lon)]) //not sure if I need to pass in lat, lon as args here since they're passed in to the fxns themselves above
-        })
-        .then(function([currentWeather], [forecast]) {
-            //call renderWeather here
-            renderWeather(currentWeather, forecast);
+        .then(function(coords) {
+            return getForecast(coords.lat, coords.lon);
+        })        
+        .then(function(forecastData) {
+            renderForecast(forecastData);
         })
         .catch(function(error) {
-            console.log("Error caught in handleSearch(). " + error);
+            console.log("Error: " + error);
         });
-};
 
+        return;
+});
 
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
+    var city = input.value;
 
+    getCoordinates(city)
+        .then(function(coords) {
+            return getCurrentWeather(coords.lat, coords.lon);
+        })
+        .then(function(currentWeatherData) {
+            renderCurrentWeather(currentWeatherData);
+        })
+        .catch(function(error) {
+            console.log("Error: " + error);
+        });
 
-// I cannot get this to work. Issues with passing the coordinates to getCurrentWeather and getForecast, and then passing those results to renderWeather.
-// function handleSearch(event) {
-//     event.preventDefault();
-
-//     // get coords
-//     var city = input.value;
-//     var coords = getCoordinates(city);
-    
-//     // get current weather and forecast by passing coordinates in to fxns correctly
-
-//     coords
-//     .then(function(coordinates) {
-//             var currentWeather = getCurrentWeather(coordinates.lat, coordinates.lon);
-//             var forecast = get5DayForecast(coordinates.lat, coordinates.lon);
-            
-            // Promise.all([getCurrentWeather(coordinates), get5DayForecast(coordinates)])
-            //     .then(function([currentWeather, forecast]) {
-            //         console.log(currentWeather, forecast);
-                    //resolve promises so renderWeather can be called and have the right data passed to it 
-                    // return renderWeather(currentWeather, forecast);
-                // });
-
-            // console.log(coordinates); //confirmed coordinates are being fetched correctly
-
-            //these are being logged as pending promises ... need to fix fxn to use .then
-                // console.log(currentWeather);
-                // console.log(forecast);
-
-
-            //currentWeather and forecast aren't being defined properly by calling them (I think...)
-
-                // return { currentWeather, forecast };
-                // return renderWeather(currentWeather, forecast);
-        // })
-        // .then(function([currentWeather, forecast]) {
-        //     //render weather on page
-        //     renderWeather(currentWeather, forecast);
-        // })
-        // .catch(function(error) {
-        //     console.log("Error encountered in handleSearch(): " + error);
-        // });
-// };
-
-form.addEventListener("submit", handleSearch);
-// btn.addEventListener("click", handleSearch);
-
-// old event listeners that don't work together. Only current weather worked.
-// form.addEventListener("submit", function(event) {
-//     event.preventDefault();
-
-//     var city = input.value;
-
-//     if (!city) {
-//         return Error("No city entered or found. Please try again.");
-//     } else {
-//         getCoordinates(city)
-//             .then(function(coords) {
-//                 return getCurrentWeather(coords.lat, coords.lon);
-//             })
-//             .then(function(currentWeather) {
-//                 renderWeather(currentWeather);
-//             })
-//             .catch(function(error) {
-//                 console.log("Error: could not get coordinates for current weather. " + error);
-//             });
-//     };
-// });
+        return;
+});
 
 // form.addEventListener("submit", function(event) {
 //     event.preventDefault();
+
 //     var city = input.value;
 
-//     if (!city) {
-//         return Error("No city entered or found. Please try again.");
-//     } else {
-//         getCoordinates(city)
-//             .then(function(coords) {
-//                 return get5DayForecast(coords.lat, coords.lon);
-//             })
-//             .then(function(forecast) {
-//                 renderWeather(forecast);
-//             })
-//             .catch(function(error) {
-//                 console.log("Error: could not get coordinates for forecast. " + error);
-//             });
-//     };
-// });
+//     getCoordinates(city)
+//         .then(function(coords) {
+//             return getCurrentWeather(coords.lat, coords.lon);
+//         })
+//         .then(function(data) {
+//             var {temp, humidity, wind } = data;
+//             weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
+//         });
+//     });
+
