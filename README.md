@@ -4,7 +4,9 @@
 
 The purpose of this assignment was to create a weather forecast dashboard using an open-source weather API, allowing the user to search for a city, view that city's 5-day weather forecast, and see a list of recently searched cities. 
 
-Please note that the dashboard is still a work-in-progress. 
+Please note that the dashboard is still a work-in-progress. You can search for a city's weather and the weather for today and as a 5-day forecast will be displayed on the page. 
+
+A recent search history will be added soon, as will more front-end styling and functionality for clearing results from the page upon a new search.
 
 ## Installation
 
@@ -12,7 +14,7 @@ N/A
 
 ## Screenshot
 
-![](./Assets/weather-dashboard_WIP.png)
+![](./Assets/weatherDashWIP.png)
 
 ## Deployed Website
 
