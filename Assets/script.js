@@ -1,6 +1,10 @@
 var myKey = "24d6dabc28b4faa4bf2a0df1923872d5";
 var form = document.getElementById("search-form");
 var input = document.getElementById("city-input");
+var currentWeatherDiv = document.getElementById("weather-current");
+var forecastDiv = document.getElementById("weather-forecast");
+
+let savedCities = getLocalStorage();
 
 function getCoordinates(city) {
     var GEO_URL = "http://api.openweathermap.org/geo/1.0/direct?q=" + `${city}` + "&limit=1&appid=" + `${myKey}`;
@@ -11,7 +15,9 @@ function getCoordinates(city) {
             if (!response.ok) {
                 throw Error("Couldn't fetch coordinates.");
             }
+            //TODO: add to local storage and render in search history div
             return response.json();
+            
         })
         .then(function(data) {
             if (data.length === 0) {
@@ -151,12 +157,34 @@ function renderCurrentWeather(currentWeatherData) {
         currentWeatherDiv.append(todayCard);        
 };
 
-function clearPage() {
-    var currentWeatherDiv = document.getElementById("weather-current");
-    currentWeatherDiv.empty();
+//grab city name from input and render in recent searches div as button with outline
+function renderRecent() {
+    saveInput()
+        .then((savedCities) => {
+            // console.log(savedCities);
 
-    var forecastDiv = document.getElementById("weather-forecast");
-    forecastDiv.empty();
+            for ( i = 0; i < savedCities.length; i++) {
+                var recentSearchesEl = document.getElementById("recent-searches");
+                var recentHeader = document.getElementById("recent-header");
+                var recentCityBtn = document.createElement("button");
+                recentCityBtn.setAttribute("class", "btn btn-info");
+        
+                recentHeader.textContent = "Recent Searches";
+                recentSearchesEl.appendChild(recentCityBtn);
+                recentCityBtn.textContent = savedCities[i];
+            }        
+        });
+};
+
+function clearPage() {
+    if(currentWeatherDiv.innerHTML !== null) {
+        currentWeatherDiv.empty();
+    }
+
+    if(forecastDiv.innerHTML !== null) {
+        forecastDiv.empty();
+
+    }    currentWeatherDiv.empty();
 
     return;
 };
@@ -165,6 +193,7 @@ form.addEventListener("submit", function(event) {
     event.preventDefault();
 
     var city = input.value;
+    saveInput(city);
 
     getCoordinates(city)
         .then(function(coords) {
@@ -184,6 +213,7 @@ form.addEventListener("submit", function(event) {
     event.preventDefault();
 
     var city = input.value;
+    // saveInput(city);
 
     getCoordinates(city)
         .then(function(coords) {
@@ -199,6 +229,28 @@ form.addEventListener("submit", function(event) {
         return;
 });
 
+//handle local storage
+//not working 
+function saveInput() {
+    let city;
+    let savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+    savedCities.push(city);
+
+    localStorage.setItem("recentCities", JSON.stringify(savedCities));
+
+    console.log(savedCities);
+
+    return savedCities.slice(5);
+};
+
+function getLocalStorage() {
+    let savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+    return savedCities.slice(5);
+};
+
+getLocalStorage();
+
 // form.addEventListener("submit", function(event) {
 //     event.preventDefault();
 
@@ -212,5 +264,4 @@ form.addEventListener("submit", function(event) {
 //             var {temp, humidity, wind } = data;
 //             weatherDiv.innerHTML = `The temperature in ${city} is ${temp}°F. Humidity is at ${humidity}%. Wind speed is ${wind}mph.`;
 //         });
-//     });
-
+//     })
